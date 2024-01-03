@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 export default App;
 
-function AddTaskForm({ handler }) {
+function AddTaskForm({ handler}) {
   return (
     <div className="add-task-form">
       <input
@@ -20,32 +20,36 @@ function AddTaskForm({ handler }) {
   );
 }
 
-function Task({ task }) {
+function Task({ task, setTasks, tasks }) {
   const [focus, setFocus] = useState(false);
+  function changeIsDone() {
+    // setTasks(tasks[tasks.indexOf(task)].isDone = true);
+    console.log(tasks[tasks.indexOf(task)].isDone + "- tasks[tasks.indexOf(task)].isDone");
+  }
+
   if(focus) {
   return (
-    <div className="task" onMouseMove={(e) => setFocus(true)} onMouseLeave={(e) => setFocus(false)}>
-      <input type="checkbox"></input>
+    <div className="task focus" onMouseMove={(e) => setFocus(true)} onMouseLeave={(e) => setFocus(false)}>
+      <input type="checkbox" onClick={(e) => {changeIsDone()}}></input>
       <p className="task-text">{task.text}</p>
       <p className="task-date">{task.date}</p>
       <button>X</button>
     </div>
-  )
-       } else {
+  ) 
+  }
   return (
-    <div key={task.id} className="task" onMouseMove={(e) => setFocus(true)}>
+    <div className="task" onMouseMove={(e) => setFocus(true)}>
       <p className="task-text">{task.text}</p>
       <p className="task-date">{task.date}</p>
     </div>
-  );
-}
+  )
 }
 
-function TasksList({ listOfTasks }) {
+function TasksList({ tasks, setTasks }) {
   let tasksList = [];
-  listOfTasks.map((task) => {
+  tasks.map((task) => {
     return tasksList.push(
-      <Task key={task.id} id={listOfTasks.indexOf(task)} task={task}></Task>
+      <Task key={task.id} id={tasks.indexOf(task)} task={task} setTasks={setTasks} tasks={tasks}></Task>
     );
   });
   return tasksList;
@@ -71,7 +75,7 @@ function App() {
     <div className="App">
       <h1>Мій список справ</h1>
       <AddTaskForm handler={addTask} />
-      <TasksList listOfTasks={tasks} />
+      <TasksList tasks={tasks} setTasks={setTasks}></TasksList>
     </div>
   );
 }
