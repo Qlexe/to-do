@@ -14,17 +14,16 @@ function AddTaskForm({ handler }) {
         placeholder="Додати нову справу"
       />
       <button id="addBtn" type="submit" onClick={handler}>
-        Додати
+        +
       </button>
     </div>
   );
 }
 
-function Task({ task, changeIsDone, taskDelete }) {
+function Task({ task, handlerChangeIsDone, handlerTaskDelete }) {
   const [isDone, setIsDone] = useState(task.isDone);
 
     return (
-      <div className="wrapper">
       <div
         className={"task" + (isDone? " task-isDone" : "")}
       >
@@ -32,21 +31,19 @@ function Task({ task, changeIsDone, taskDelete }) {
         className="task-checkbox"
           type="checkbox"
           onChange={(e) => {
-            changeIsDone(task.id);
+            handlerChangeIsDone(task.id);
             setIsDone(!isDone);
-            console.log(isDone);
           }}
           checked={isDone}
         />
         <p className="task-text">{isDone ? <s>{task.text}</s> : task.text}</p>
         <p className="task-date">{task.date}</p>
-        <button className="task-delete-button" onClick={(e) => taskDelete(task.id)}>X</button>
-      </div>
+        <button className="task-delete-button" onClick={(e) => handlerTaskDelete(task.id)}>X</button>
       </div>
     );
 }
 
-function TasksList({ tasks, changeIsDone, taskDelete }) {
+function TasksList({ tasks, handlerChangeIsDone, handlerTaskDelete }) {
   let tasksList = [];
   tasks.map((task) => {
     return tasksList.push(
@@ -55,8 +52,8 @@ function TasksList({ tasks, changeIsDone, taskDelete }) {
         id={tasks.indexOf(task)}
         task={task}
         tasks={tasks}
-        changeIsDone={changeIsDone}
-        taskDelete={taskDelete}
+        handlerChangeIsDone={handlerChangeIsDone}
+        taskDelete={handlerTaskDelete}
       ></Task>
     );
   });
@@ -66,7 +63,7 @@ function TasksList({ tasks, changeIsDone, taskDelete }) {
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  function addTask() {
+  function handlerAddTask() {
     const input = document.getElementById("new-task");
     const newTask = {
       id: tasks.length + 1,
@@ -78,9 +75,8 @@ function App() {
 
     setTasks(tasks.concat(newTask));
   }
-  console.log(tasks);
 
-  function changeIsDone(id) {
+  function handlerChangeIsDone(id) {
     const newTasks = tasks.map((task) => {
       if (task.id === id) {
         task.isDone = !task.isDone;
@@ -90,15 +86,15 @@ function App() {
     setTasks(newTasks);
   }
 
-  function taskDelete(id) {
+  function handlerTaskDelete(id) {
     const newTasks = tasks.filter((task) => task.id!== id);
     setTasks(newTasks);
   }
 
   return (
     <div className="App">
-      <AddTaskForm handler={addTask} />
-      <TasksList tasks={tasks} changeIsDone={changeIsDone} taskDelete={taskDelete}></TasksList>
+      <AddTaskForm handler={handlerAddTask} />
+      <TasksList tasks={tasks} handlerChangeIsDone={handlerChangeIsDone} handlerTaskDelete={handlerTaskDelete}></TasksList>
     </div>
   );
 }

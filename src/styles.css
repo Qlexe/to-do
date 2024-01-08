@@ -12,14 +12,14 @@ body {
   justify-content: space-between;
 }
 
-.add-task-form input[type="text"] {
+#new-task {
   padding: 10px;
   border: 2px solid #0078d7;
   margin-right: 10px;
   width: 100%;
 }
 
-.add-task-form input[type="text"]:focus {
+#new-task {
   border-color: #005ba1;
 }
 
@@ -34,8 +34,13 @@ body {
 .task {
   display: flex;
   justify-content: space-between;
-  background-color: bisque;
+  background-color: #4a92cc;
   position: relative;
+  margin-top: 1px;
+}
+
+.task:hover{
+  background-color: #5bb5ff;
 }
 
 .task > input,
@@ -44,7 +49,7 @@ body {
 }
 
 .task-isDone {
-  background-color: rgb(107, 107, 107);
+  background-color: rgba(107, 107, 107, 0.774);
 }
 
 .task-text {
