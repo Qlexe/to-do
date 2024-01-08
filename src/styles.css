@@ -34,7 +34,7 @@ body {
 .task {
   display: flex;
   justify-content: space-between;
-  background-color: #4a92cc;
+  background-color: #417eaf;
   position: relative;
   margin-top: 1px;
 }
