@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {patchTask, addTask} from './fetchData';
 export default App;
 
-function AddTaskForm({ handler }) {
+function AddTaskForm({ handler}) {
   return (
     <div className="add-task-form">
       <input
@@ -21,10 +22,10 @@ function AddTaskForm({ handler }) {
 }
 
 function Task({ task, handlerChangeIsDone, handlerTaskDelete }) {
-  const [isDone, setIsDone] = useState(task.isDone);
+  const [isDone, setIsDone] = useState(task.completed);
 
   return (
-    <div className={"task" + (isDone ? " task-isDone" : "")}>
+    <div id={task.id} className={"task" + (isDone ? " task-isDone" : "")}>
       <input
         className="task-checkbox"
         type="checkbox"
@@ -34,8 +35,8 @@ function Task({ task, handlerChangeIsDone, handlerTaskDelete }) {
         }}
         checked={isDone}
       />
-      <p className="task-text">{isDone ? <s>{task.text}</s> : task.text}</p>
-      <p className="task-date">{task.date}</p>
+      <p className="task-text">{isDone ? <s>{task.title}</s> : task.title}</p>
+      {/* <p className="task-date">{task.date}</p> */}
       <button
         className="task-delete-button"
         onClick={(e) => handlerTaskDelete(task.id)}
@@ -46,8 +47,10 @@ function Task({ task, handlerChangeIsDone, handlerTaskDelete }) {
   );
 }
 
-function TasksList({ tasks, handlerChangeIsDone, handlerTaskDelete }) {
-  let tasksList = [];
+function TasksList({ tasks, handlerChangeIsDone, handlerTaskDelete}) {
+
+  const tasksList = [];
+
   tasks
     .sort((a, b) => {
       if (a.isDone === b.isDone) {
@@ -61,7 +64,6 @@ function TasksList({ tasks, handlerChangeIsDone, handlerTaskDelete }) {
           key={task.id}
           id={tasks.indexOf(task)}
           task={task}
-          tasks={tasks}
           handlerChangeIsDone={handlerChangeIsDone}
           handlerTaskDelete={handlerTaskDelete}
         ></Task>
@@ -72,18 +74,37 @@ function TasksList({ tasks, handlerChangeIsDone, handlerTaskDelete }) {
 
 function App() {
   const [tasks, setTasks] = useState([]);
+  const [userId, setUserId] = useState(null);
+
+  console.log(tasks);
+
+  useEffect(() => {
+      const url = "https://jsonplaceholder.typicode.com/todos";
+      console.log('userId', userId);
+    
+      fetch(!userId ? url : url + `?userId=${userId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setTasks(data);
+        });
+  }, [userId]);
 
   function handlerAddTask() {
     const input = document.getElementById("new-task");
+    if (Number(input.value) && input.value.length <= 2) {
+      return setUserId(Number(input.value));
+    }
     if (input.value && input.value.length > 1) {
       const newTask = {
+        userId: userId,
         id: tasks.length + 1,
-        text: input.value,
-        isDone: false,
-        date: new Date().toLocaleDateString(),
+        title: input.value,
+        completed: false,
       };
       input.value = "";
 
+      addTask(newTask);
       setTasks(tasks.concat(newTask));
     }
   }
@@ -93,6 +114,7 @@ function App() {
       if (task.id === id) {
         task.isDone = !task.isDone;
       }
+      patchTask(task);
       return task;
     });
     setTasks(newTasks);
@@ -105,7 +127,7 @@ function App() {
 
   return (
     <div className="App">
-      <AddTaskForm handler={handlerAddTask} />
+      <AddTaskForm handler={handlerAddTask}/>
       <TasksList
         tasks={tasks}
         handlerChangeIsDone={handlerChangeIsDone}
