@@ -43,6 +43,12 @@ body {
   background-color: #417eaf;
   position: relative;
   margin-top: 2px;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.task-appear{
+  opacity: 1;
 }
 
 .task:hover{

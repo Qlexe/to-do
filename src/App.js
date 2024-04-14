@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {patchTask, addTask} from './fetchData';
 export default App;
 
@@ -23,9 +23,22 @@ function AddTaskForm({ handler}) {
 
 function Task({ task, handlerChangeIsDone, handlerTaskDelete }) {
   const [isDone, setIsDone] = useState(task.completed);
+  const taskRef = useRef(null);
+
+  useEffect(() => {
+    const taskElement = taskRef.current;
+    taskElement.style.opacity = 0;
+
+    const timeout = setTimeout(() => {
+      taskElement.style.opacity = 1;
+    }, 150 * task.id); // Delay based on task id
+
+    return () => clearTimeout(timeout); // Clean up the timeout on unmount
+  }, [task.id]);
+
 
   return (
-    <div id={task.id} className={"task" + (isDone ? " task-isDone" : "")}>
+    <div id={task.id} className={"task " + (isDone ? " task-isDone" : "")} ref={taskRef}>
       <input
         className="task-checkbox"
         type="checkbox"
